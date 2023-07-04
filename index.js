@@ -1,6 +1,6 @@
 let board;
 let context;
-let boardWidth=600;
+let boardWidth=700;
 let boardHeight=600;
 
 let playerWidth=80;
@@ -30,7 +30,7 @@ let player = {
 }
 
 let blockArr=[];
-let blockWidth=54;
+let blockWidth=64.5;
 let blockHeight=15;
 let blockColumns=9;
 let blockRows=3;
@@ -44,6 +44,8 @@ let score=0;
 let gameOver=false;
 let level=1;
 let ballCollidingWithPlayer = false;
+let lives = 3;
+
 
 let leftArrowDown = false;
 let rightArrowDown = false;
@@ -110,9 +112,18 @@ function update(){
     } else if ((ball.x + ball.width) >= boardWidth && ball.velX > 0) {
         ball.velX *= -1;
     } else if (ball.y + ball.height >= boardHeight && ball.velY > 0) {
-        context.font = "20px sans-serif";
-        context.fillText("Gameover: Press 'space' to restart", 160, 400);
-        gameOver = true;
+        lives--; 
+        if (lives === 0) {
+            context.font = "20px sans-serif";
+            context.fillText("Gameover: Press 'space' to restart", 160, 400);
+            gameOver = true;
+        } else {
+            //reset ball and player positions
+            ball.x = (boardWidth + 40) / 2;
+            ball.y = boardHeight / 2;
+            player.x = boardWidth / 2 - playerWidth / 2;
+            player.y = boardHeight - playerHeight - 15;
+        }
     }
 
     //ball bounce off player paddle
@@ -155,7 +166,7 @@ function update(){
     //next level
     if(blockCount==0){
         score+=100*blockRows*blockColumns;
-        Math.min(blockRows+1,blockMaxRows);
+        blockRows = Math.min(blockRows+1,blockMaxRows);
         level++;
         createBlocks();
     }
@@ -163,10 +174,13 @@ function update(){
     //score
     context.fillStyle="skyblue";
     context.font="20px sans-serif";
-    context.fillText(score,10,25)
+    context.fillText("Score: "+ score,10,25)
 
     // level
     context.fillText("Level: " + level, boardWidth - 80, 25);
+
+    //lives
+    context.fillText("Lives: " + lives, boardWidth/2 - 40, 25);
 
     //player move
     if (leftArrowDown) {
@@ -182,6 +196,7 @@ function update(){
     }
 
 }
+
 
 function outOfBounds(xposition){
     return (xposition<0 || xposition+playerWidth > boardWidth)
