@@ -43,6 +43,7 @@ let blockY=45;
 let score=0;
 let gameOver=false;
 let level=1;
+let ballCollidingWithPlayer = false;
 
 let leftArrowDown = false;
 let rightArrowDown = false;
@@ -115,11 +116,14 @@ function update(){
     }
 
     //ball bounce off player paddle
-    if(topCollision(ball,player) || bottomCollisions(ball,player)){
-        ball.velY *=-1;
-    }
-    else if( leftCollision(ball,player) || rightCollision(ball,player)){
-        ball.velX *=-1;
+    if (!ballCollidingWithPlayer && (topCollision(ball, player) || bottomCollisions(ball, player))) {
+        ball.velY *= -1;
+        ballCollidingWithPlayer = true;
+    } else if (!ballCollidingWithPlayer && (leftCollision(ball, player) || rightCollision(ball, player))) {
+        ball.velX *= -1;
+        ballCollidingWithPlayer = true;
+    } else if (!topCollision(ball, player) && !bottomCollisions(ball, player) && !leftCollision(ball, player) && !rightCollision(ball, player)) {
+        ballCollidingWithPlayer = false;
     }
 
     //drawing blocks
