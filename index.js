@@ -10,7 +10,11 @@ let playerVelX=3;
 let ballWidth=10;
 let ballHeight=10;
 let ballVelX=2;
-let ballVelY=1.33;
+let ballVelY=1.3;
+let maxBallVelX=ballVelX+1;
+let maxBallVelY=ballVelY+1;
+let minBallVelX=ballVelX-1;
+let minBallVelY=ballVelY-1;
 
 let ball={
     x:(boardWidth+40)/2,
@@ -103,7 +107,29 @@ function update(){
     ball.x += ball.velX;
     ball.y += ball.velY;
     context.fillRect(ball.x, ball.y, ball.width, ball.height);
-    
+
+
+    // log ball velocities after updating position
+    console.log("ball.velX after updating position:", ball.velX.toFixed(1));
+    console.log("ball.velY after updating position:", ball.velY.toFixed(1));
+
+
+    // limit ball velocity to range between min and max values
+    if (Math.abs(ball.velX) > maxBallVelX) {
+        console.log("vel before was greater")
+        ball.velX = maxBallVelX * Math.sign(ball.velX);
+    } else if (Math.abs(ball.velX) < minBallVelX) {
+        ball.velX = minBallVelX * Math.sign(ball.velX);
+    }
+    if (Math.abs(ball.velY) > maxBallVelY) {
+        ball.velY = maxBallVelY * Math.sign(ball.velY);
+    } else if (Math.abs(ball.velY) < minBallVelY) {
+        ball.velY = minBallVelY * Math.sign(ball.velY);
+    }
+
+    // log ball velocities after limiting maximum velocity
+    console.log("ball.velX after limiting maximum velocity:", ball.velX.toFixed(1));
+    console.log("ball.velY after limiting maximum velocity:", ball.velY.toFixed(1));
     //ball bounce off walls
     if (ball.y <= 0 && ball.velY < 0) {
         ball.velY *= -1;
@@ -128,10 +154,16 @@ function update(){
 
     //ball bounce off player paddle
     if (!ballCollidingWithPlayer && (topCollision(ball, player) || bottomCollisions(ball, player))) {
+        let relativeMovement = getRelativeMovement();
         ball.velY *= -1;
+        ball.velY += getRandomDeviation() + relativeMovement / 15;
+        ball.velX += getRandomDeviation() + relativeMovement / 15;
         ballCollidingWithPlayer = true;
     } else if (!ballCollidingWithPlayer && (leftCollision(ball, player) || rightCollision(ball, player))) {
+        let relativeMovement = getRelativeMovement();
         ball.velX *= -1;
+        ball.velY += getRandomDeviation() + relativeMovement / 15;
+        ball.velX += getRandomDeviation() + relativeMovement / 15;
         ballCollidingWithPlayer = true;
     } else if (!topCollision(ball, player) && !bottomCollisions(ball, player) && !leftCollision(ball, player) && !rightCollision(ball, player)) {
         ballCollidingWithPlayer = false;
@@ -146,17 +178,19 @@ function update(){
     for(let i=0; blockArr.length>i; i++){
         let block=blockArr[i];
         if(!block.break){
-            if(topCollision(ball,block) || bottomCollisions(ball,block)){
-                block.break=true;
+            if (topCollision(ball, block) || bottomCollisions(ball, block)) {
+                block.break = true;
                 ball.velY *= -1;
-                blockCount-=1;
-                score+=100;
-            }
-            else if(leftCollision(ball,block) || rightCollision(ball,block)){
-                block.break=true;
+                ball.velY += getRandomDeviation();
+                blockCount -= 1;
+                score += 100;
+            } 
+            else if (leftCollision(ball, block) || rightCollision(ball, block)) {
+                block.break = true;
                 ball.velX *= -1;
-                blockCount-=1;
-                score+=100;
+                ball.velY += getRandomDeviation();
+                blockCount -= 1;
+                score += 100;
             }
             context.fillRect(block.x, block.y, block.width, block.height);
             context.strokeRect(block.x, block.y, block.width, block.height);
@@ -197,11 +231,23 @@ function update(){
 
 }
 
+function getRandomDeviation() {
+    return (Math.random() - 4) / 10;
+}
+
+function getRelativeMovement() {
+    if (leftArrowDown) {
+        return ball.velX - player.velX;
+    } else if (rightArrowDown) {
+        return ball.velX + player.velX;
+    } else {
+        return ball.velX;
+    }
+}
 
 function outOfBounds(xposition){
     return (xposition<0 || xposition+playerWidth > boardWidth)
 }
-
 
 function reset(e){
     if(gameOver){
@@ -271,7 +317,8 @@ function resetGame(){
 
     blockArr=[];
     score=0;
-    level=1
+    level=1;
+    lives=3;
     blockRows=3;
     createBlocks();
 }
