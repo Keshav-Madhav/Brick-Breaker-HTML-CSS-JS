@@ -90,20 +90,28 @@ function update(){
     context.clearRect(0,0,boardWidth,boardHeight)
 
     context.fillStyle="red";
+    context.shadowColor = "rgba(255,0,0, 0.9)";
+    context.shadowBlur = 20;
     context.fillRect(player.x, player.y, playerWidth, playerHeight);
 
     context.fillStyle="white";
+    context.shadowColor = "rgba(255,355,255, 0.7)";
+    context.shadowBlur = 40;
     ball.x += ball.velX;
     ball.y += ball.velY;
     context.fillRect(ball.x, ball.y, ball.width, ball.height);
     
     //ball bounce off walls
-    //ball bounce off player paddle
-    if(topCollision(ball,player) || bottomCollisions(ball,player)){
-        ball.velY *=-1;
-    }
-    else if( leftCollision(ball,player) || rightCollision(ball,player)){
-        ball.velX *=-1;
+    if (ball.y <= 0 && ball.velY < 0) {
+        ball.velY *= -1;
+    } else if (ball.x <= 0 && ball.velX < 0) {
+        ball.velX *= -1;
+    } else if ((ball.x + ball.width) >= boardWidth && ball.velX > 0) {
+        ball.velX *= -1;
+    } else if (ball.y + ball.height >= boardHeight && ball.velY > 0) {
+        context.font = "20px sans-serif";
+        context.fillText("Gameover: Press 'space' to restart", 160, 400);
+        gameOver = true;
     }
 
     //ball bounce off player paddle
@@ -115,7 +123,11 @@ function update(){
     }
 
     //drawing blocks
-    context.fillStyle="skyblue";
+    context.fillStyle="rgba(6, 0, 20,0.7)";
+    context.strokeStyle = "skyblue";
+    context.lineWidth=2;
+    context.shadowColor = "rgba(135,106,235, 0.7)";
+    context.shadowBlur = 10;
     for(let i=0; blockArr.length>i; i++){
         let block=blockArr[i];
         if(!block.break){
