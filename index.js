@@ -3,12 +3,12 @@ let context;
 let boardWidth=700;
 let boardHeight=600;
 
-let playerWidth=80;
-let playerHeight=10;
+let playerWidth=90;
+let playerHeight=12;
 let playerVelX=3;
 
-let ballWidth=10;
-let ballHeight=10;
+let ballWidth=13;
+let ballHeight=13;
 let ballVelX=2;
 let ballVelY=1.3;
 let maxBallVelX=ballVelX+1;
@@ -41,8 +41,8 @@ let blockRows=3;
 let blockMaxRows=10;
 let blockCount=0;
 
-let blockX=15;
-let blockY=45;
+let blockX=16;
+let blockY=55;
 
 let score=0;
 let gameOver=false;
@@ -50,6 +50,8 @@ let level=1;
 let ballCollidingWithPlayer = false;
 let lives = 3;
 
+let countdown = 3;
+let countdownActive = false;
 
 let leftArrowDown = false;
 let rightArrowDown = false;
@@ -90,10 +92,10 @@ window.onload=function(){
 
 function update(){
     requestAnimationFrame(update);
-    if(gameOver){
+    if(gameOver || countdownActive){
         return;
     }
-
+    
     context.clearRect(0,0,boardWidth,boardHeight)
 
     context.fillStyle="red";
@@ -144,11 +146,7 @@ function update(){
             context.fillText("Gameover: Press 'space' to restart", 160, 400);
             gameOver = true;
         } else {
-            //reset ball and player positions
-            ball.x = (boardWidth + 40) / 2;
-            ball.y = boardHeight / 2;
-            player.x = boardWidth / 2 - playerWidth / 2;
-            player.y = boardHeight - playerHeight - 15;
+            startCountdown();
         }
     }
 
@@ -156,13 +154,13 @@ function update(){
     if (!ballCollidingWithPlayer && (topCollision(ball, player) || bottomCollisions(ball, player))) {
         let relativeMovement = getRelativeMovement();
         ball.velY *= -1;
-        ball.velY += getRandomDeviation() + relativeMovement / 15;
+        ball.velY += getRandomDeviation() - relativeMovement / 15;
         ball.velX += getRandomDeviation() + relativeMovement / 15;
         ballCollidingWithPlayer = true;
     } else if (!ballCollidingWithPlayer && (leftCollision(ball, player) || rightCollision(ball, player))) {
         let relativeMovement = getRelativeMovement();
         ball.velX *= -1;
-        ball.velY += getRandomDeviation() + relativeMovement / 15;
+        ball.velY += getRandomDeviation() - relativeMovement / 15;
         ball.velX += getRandomDeviation() + relativeMovement / 15;
         ballCollidingWithPlayer = true;
     } else if (!topCollision(ball, player) && !bottomCollisions(ball, player) && !leftCollision(ball, player) && !rightCollision(ball, player)) {
@@ -206,7 +204,7 @@ function update(){
     }
 
     //score
-    context.fillStyle="skyblue";
+    context.fillStyle="lightgreen";
     context.font="20px sans-serif";
     context.fillText("Score: "+ score,10,25)
 
@@ -321,4 +319,74 @@ function resetGame(){
     lives=3;
     blockRows=3;
     createBlocks();
+}
+
+function startCountdown() {
+    // start countdown
+    countdownActive = true;
+    countdown = 3;
+    context.fillStyle="white";
+    context.font = "50px sans-serif";
+    context.fillText(countdown, boardWidth/2, boardHeight/2);
+    let countdownInterval = setInterval(() => {
+        countdown--;
+        if (countdown === 0) {
+            clearInterval(countdownInterval);
+            //reset ball and player positions
+            ball.x = (boardWidth + 40) / 2;
+            ball.y = boardHeight / 2;
+            player.x = boardWidth / 2 - playerWidth / 2;
+            player.y = boardHeight - playerHeight - 15;
+            ball.velX = maxBallVelX-1;
+            ball.velY = maxBallVelY-1;
+            countdownActive = false;
+        } else {
+            drawGameObjects();
+            context.fillStyle="white";
+            context.font = "50px sans-serif";
+            context.fillText(countdown, boardWidth/2, boardHeight/2);
+        }
+    }, 1000);
+}
+
+function drawGameObjects() {
+    context.clearRect(0,0,boardWidth,boardHeight);
+
+    // draw player paddle
+    context.fillStyle="red";
+    context.shadowColor = "rgba(255,0,0, 0.9)";
+    context.shadowBlur = 20;
+    context.fillRect(player.x, player.y, playerWidth, playerHeight);
+
+    // draw ball
+    context.fillStyle="white";
+    context.shadowColor = "rgba(255,355,255, 0.7)";
+    context.shadowBlur = 40;
+    context.fillRect(ball.x, ball.y, ball.width, ball.height);
+
+    // draw blocks
+    context.fillStyle="rgba(6, 0, 20,0.7)";
+    context.strokeStyle = "skyblue";
+    context.lineWidth=2;
+    context.shadowColor = "rgba(135,106,235, 0.7)";
+    context.shadowBlur = 10;
+    for(let i=0; blockArr.length>i; i++){
+        let block=blockArr[i];
+        if(!block.break){
+            context.fillRect(block.x, block.y, block.width, block.height);
+            context.strokeRect(block.x, block.y, block.width, block.height);
+        }
+    }
+
+    // draw score
+    context.fillStyle="lightgreen";
+    context.font="20px sans-serif";
+    context.fillText("Score: "+ score,10,25);
+
+    // level
+    context.fillText("Level: " + level, boardWidth - 80, 25);
+
+    //lives
+    context.fillText("Lives: " + lives, boardWidth/2 - 40, 25);
+
 }
