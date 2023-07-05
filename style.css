@@ -47,6 +47,7 @@ label, #bgmVolume, button {
 #bgmVolume {
     width: 200px;
     -webkit-appearance: none;
+    appearance: none;
     width: 200px;
     height: 10px;
     border-radius: 5px;

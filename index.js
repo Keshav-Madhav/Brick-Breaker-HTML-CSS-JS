@@ -1,4 +1,4 @@
-let fps = 60;
+let fps = 144;
 let fpsInterval = 1000 / fps;
 let lastFrameTime = 0;
 let frameCount = 0;
