@@ -1,14 +1,20 @@
+let fps = 60;
+let fpsInterval = 1000 / fps;
+let lastFrameTime = 0;
+let frameCount = 0;
+let currentFps = 0;
+
 let board;
 let context;
 let boardWidth=700;
 let boardHeight=600;
 
-let playerWidth=90;
+let playerWidth=80;
 let playerHeight=12;
 let playerVelX=3;
 
-let ballWidth=13;
-let ballHeight=13;
+let ballWidth=12;
+let ballHeight=12;
 let ballVelX=2;
 let ballVelY=1.3;
 let maxBallVelX=ballVelX+1;
@@ -34,7 +40,7 @@ let player = {
 }
 
 let blockArr=[];
-let blockWidth=64.5;
+let blockWidth=61;
 let blockHeight=15;
 let blockColumns=9;
 let blockRows=3;
@@ -49,8 +55,10 @@ let gameOver=false;
 let level=1;
 let ballCollidingWithPlayer = false;
 let lives = 3;
-let maxLives = 3;
+let maxLives = 4;
 let gameStarted=false;
+let paused = false;
+
 
 let countdown = 3;
 let countdownActive = false;
@@ -64,6 +72,96 @@ heartImage.src = './Assets/heart.png';
 let heartOutlineImage =new Image();
 heartOutlineImage.src="./Assets/heart-outline.png";
 
+//music
+
+let bounceWallAud= new Audio();
+bounceWallAud.src="./Assets/Sounds/ball_bounce.mp3";
+bounceWallAud.volume="0.3";
+
+let bouncePaddleAud=new Audio();
+bouncePaddleAud.src="./Assets/Sounds/ball_bounce_paddle.mp3";
+bouncePaddleAud.volume="0.5";
+
+let blockBreakAud=new Audio();
+blockBreakAud.src="./Assets/Sounds/block_break.mp3";
+blockBreakAud.volume="0.6";
+
+let countdownAud=new Audio();
+countdownAud.src="./Assets/Sounds/3sec countdown.mp3";
+countdownAud.volume="0.6";
+
+let lifeGainAud=new Audio();
+lifeGainAud.src="./Assets/Sounds/life_gained.mp3";
+lifeGainAud.volume="0.2";
+
+let lifeLostAud=new Audio();
+lifeLostAud.src="./Assets/Sounds/ball_falls.mp3";
+
+let gameOverAud=new Audio();
+gameOverAud.src="./Assets/Sounds/game_over.mp3";
+
+let powerUpAud=new Audio();
+powerUpAud.src="./Assets/Sounds/Power_up.mp3";
+
+let levelCompleteAud=new Audio();
+levelCompleteAud.src="./Assets/Sounds/level_complete.mp3";
+levelCompleteAud.volume="0.4";
+
+let backgroundAud=new Audio();
+backgroundAud.src="./Assets/Sounds/background_music -david_fesliyan.mp3";
+backgroundAud.volume = 0.1;
+backgroundAud.loop=true;
+
+let allSounds = [bounceWallAud, bouncePaddleAud, blockBreakAud, countdownAud, lifeGainAud, lifeLostAud, gameOverAud, powerUpAud, levelCompleteAud];
+let muted = false;
+let bgmMuted = false;
+
+
+document.getElementById('bgmVolume').addEventListener('input', function(e) {
+    backgroundAud.volume = e.target.value;
+    backgroundAud.play();
+});
+
+document.getElementById('muteBgm').addEventListener('click', function() {
+    if (backgroundAud.muted) {
+        backgroundAud.muted = false;
+        bgmMuted = false;
+        this.textContent = 'Mute Background Music';
+    } else {
+        backgroundAud.muted = true;
+        bgmMuted = true;
+        this.textContent = 'Unmute Background Music';
+    }
+});
+
+
+document.getElementById('muteAll').addEventListener('click', function() {
+    if (muted) {
+        allSounds.forEach(sound => sound.muted = false);
+        muted = false;
+        this.textContent = 'Mute All Sounds';
+    } else {
+        allSounds.forEach(sound => sound.muted = true);
+        muted = true;
+        this.textContent = 'Unmute All Sounds';
+    }
+});
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'm') {
+        if (bgmMuted) {
+            backgroundAud.muted = false;
+            bgmMuted = false;
+            document.getElementById('muteBgm').textContent = 'Mute BG Music(m)';
+        } else {
+            backgroundAud.muted = true;
+            bgmMuted = true;
+            document.getElementById('muteBgm').textContent = 'Unmute BG Music(m)';
+        }
+    }
+});
+
+
 
 document.addEventListener('keydown', function(e) {
     if (e.code === 'ArrowLeft') {
@@ -72,6 +170,7 @@ document.addEventListener('keydown', function(e) {
     } else if (e.code === 'ArrowRight') {
         rightArrowDown = true;
         gameStarted = true;
+        backgroundAud.play();
     }
 });
 
@@ -83,6 +182,13 @@ document.addEventListener('keyup', function(e) {
         rightArrowDown = false;
     }
 });
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'p') {
+        paused = !paused;
+    }
+});
+
 
 window.onload=function(){
     //board
@@ -100,21 +206,38 @@ window.onload=function(){
 
     requestAnimationFrame(update);
     document.addEventListener("keydown", reset);
+    backgroundAud.play();
 } 
 
-function update(){
+function update(timestamp){
     requestAnimationFrame(update);
-    if(gameOver || countdownActive){
+
+    if(gameOver || countdownActive || paused){
         return;
     }
 
     context.clearRect(0,0,boardWidth,boardHeight)
 
+    // Calculate and display FPS
+    frameCount++;
+    let elapsedTime = timestamp - lastFrameTime;
+    if (elapsedTime > fpsInterval) {
+        currentFps = Math.round(frameCount / (elapsedTime / 1000));
+        frameCount = 0;
+        lastFrameTime = timestamp;
+    }
+    context.shadowColor="transparent";
+    context.fillStyle='rgba(255,255,255,0.5)';
+    context.font="10px sans-serif";
+    context.fillText("FPS: "+ currentFps, 10, 10);
+
+    //player paddle
     context.fillStyle="red";
     context.shadowColor = "rgba(255,0,0, 0.9)";
     context.shadowBlur = 20;
     context.fillRect(player.x, player.y, playerWidth, playerHeight);
 
+    //ball
     context.fillStyle="white";
     context.shadowColor = "rgba(255,355,255, 0.7)";
     context.shadowBlur = 40;
@@ -159,13 +282,17 @@ function update(){
                 ball.velY += getRandomDeviation();
                 blockCount -= 1;
                 score += 100;
+                blockBreakAud.currentTime = 0;
+                blockBreakAud.play();
             } 
             else if (leftCollision(ball, block) || rightCollision(ball, block)) {
                 block.break = true;
                 ball.velX *= -1;
-                ball.velY += getRandomDeviation();
+                ball.velX += getRandomDeviation();
                 blockCount -= 1;
                 score += 100;
+                blockBreakAud.currentTime = 0;
+                blockBreakAud.play();
             }
             context.fillRect(block.x, block.y, block.width, block.height);
             context.strokeRect(block.x, block.y, block.width, block.height);
@@ -178,27 +305,33 @@ function update(){
         blockRows = Math.min(blockRows+1,blockMaxRows);
         level++;
         playerWidth += 10; // increase paddle size
+        if (player.x + playerWidth > boardWidth) {
+            player.x = boardWidth - playerWidth;
+        }
+        powerUpAud.play();
+        setTimeout(() => levelCompleteAud.play(), 300);
         if (level % 3 === 0 && lives < maxLives) {
             lives++; // gain an extra life
+            setTimeout(() => lifeGainAud.play(), 600);
         }
         createBlocks();
-    }
+    }    
 
 
     //score
     context.fillStyle="lightgreen";
     context.font="20px sans-serif";
-    context.fillText("Score: "+ score,10,25)
+    context.fillText("Score: "+ score,10,30)
 
     // level
-    context.fillText("Level: " + level, boardWidth - 80, 25);
+    context.fillText("Level: " + level, boardWidth - 80, 30);
 
     //lives
     context.shadowColor = "rgba(255,0,0, 0.5)";
     context.shadowBlur = 10;
     for (let i = 0; i < 3; i++) {
         let x = boardWidth/2 - 40 + i * 30;
-        let y = 10;
+        let y = 15;
         let width = 20;
         let height = 20;
         if (i < lives) {
@@ -278,7 +411,7 @@ function createBlocks(){
     for (let c=0;c<blockColumns;c++){
         for (let r=0; r<blockRows;r++){
             let block ={
-                x:blockX + c*blockWidth + c*11,
+                x:blockX + c*blockWidth + c*11 +15,
                 y:blockY +r*blockHeight + r*10,
                 width: blockWidth,
                 height: blockHeight,
@@ -293,17 +426,24 @@ function createBlocks(){
 function ballBounceWall(){
     if (ball.y <= 0 && ball.velY < 0) {
         ball.velY *= -1;
+        bounceWallAud.play();
     } else if (ball.x <= 0 && ball.velX < 0) {
         ball.velX *= -1;
+        bounceWallAud.play();
     } else if ((ball.x + ball.width) >= boardWidth && ball.velX > 0) {
         ball.velX *= -1;
+        bounceWallAud.play();
     } else if (ball.y + ball.height >= boardHeight && ball.velY > 0) {
         lives--; 
+        lifeLostAud.play();
         if (lives === 0) {
             context.font = "20px sans-serif";
-            context.fillText("Gameover: Press 'space' to restart", 160, 400);
+            context.fillText("Gameover: Press 'space' to restart", 220, 400);
             gameOver = true;
+            backgroundAud.pause();
+            gameOverAud.play();
         } else {
+            backgroundAud.pause();
             startCountdown();
         }
     }
@@ -316,12 +456,14 @@ function ballBouncePaddle(){
         ball.velY += getRandomDeviation() - relativeMovement / 15;
         ball.velX += getRandomDeviation() + relativeMovement / 15;
         ballCollidingWithPlayer = true;
+        bouncePaddleAud.play();
     } else if (!ballCollidingWithPlayer && (leftCollision(ball, player) || rightCollision(ball, player))) {
         let relativeMovement = getRelativeMovement();
         ball.velX *= -1;
         ball.velY += getRandomDeviation() - relativeMovement / 15;
         ball.velX += getRandomDeviation() + relativeMovement / 15;
         ballCollidingWithPlayer = true;
+        bouncePaddleAud.play();
     } else if (!topCollision(ball, player) && !bottomCollisions(ball, player) && !leftCollision(ball, player) && !rightCollision(ball, player)) {
         ballCollidingWithPlayer = false;
     }
@@ -350,12 +492,15 @@ function resetGame(){
     level=1;
     lives=3;
     blockRows=3;
+    backgroundAud.play();
+    startCountdown();
     createBlocks();
 }
 
 function startCountdown() {
     // start countdown
     countdownActive = true;
+    countdownAud.play();
     countdown = 3;
     context.fillStyle="white";
     context.font = "50px sans-serif";
@@ -372,6 +517,7 @@ function startCountdown() {
             ball.velX = maxBallVelX-1;
             ball.velY = maxBallVelY-1;
             countdownActive = false;
+            backgroundAud.play();
         } else {
             drawGameObjects();
             context.fillStyle="white";

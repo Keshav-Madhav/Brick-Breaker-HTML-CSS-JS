@@ -3,12 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brick Breaker</title>
+    <title>Breakout</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="background"></div>
     <canvas id="board"></canvas>
+    <div class="volControl">
+        <label for="bgmVolume" class="bgvol">Background Music Volume:</label>
+        <input type="range" id="bgmVolume" name="bgmVolume" min="0" max="1" step="0.01" value="0.1">
+    </div>
+    <button id="muteBgm">Mute BG Music(m)</button>
+    <button id="muteAll">Mute All Sounds</button>
+    
 </body>
 <script src="index.js"></script>
 </html>
