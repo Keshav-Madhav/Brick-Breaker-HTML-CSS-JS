@@ -1,4 +1,4 @@
-let fps = 144;
+let fps = 60;
 let fpsInterval = 1000 / fps;
 let lastFrameTime = 0;
 let frameCount = 0;
@@ -449,25 +449,29 @@ function ballBounceWall(){
     }
 }
 
-function ballBouncePaddle(){
-    if (!ballCollidingWithPlayer && (topCollision(ball, player) || bottomCollisions(ball, player))) {
+function ballBouncePaddle() {
+    let ballNextX = ball.x + ball.velX;
+    let ballNextY = ball.y + ball.velY;
+
+    let sweptBall = {
+        x: Math.min(ball.x, ballNextX),
+        y: Math.min(ball.y, ballNextY),
+        width: Math.abs(ball.x - ballNextX) + ball.width,
+        height: Math.abs(ball.y - ballNextY) + ball.height
+    };
+
+    if (!ballCollidingWithPlayer && detectCollision(sweptBall, player)) {
         let relativeMovement = getRelativeMovement();
         ball.velY *= -1;
         ball.velY += getRandomDeviation() - relativeMovement / 15;
         ball.velX += getRandomDeviation() + relativeMovement / 15;
         ballCollidingWithPlayer = true;
         bouncePaddleAud.play();
-    } else if (!ballCollidingWithPlayer && (leftCollision(ball, player) || rightCollision(ball, player))) {
-        let relativeMovement = getRelativeMovement();
-        ball.velX *= -1;
-        ball.velY += getRandomDeviation() - relativeMovement / 15;
-        ball.velX += getRandomDeviation() + relativeMovement / 15;
-        ballCollidingWithPlayer = true;
-        bouncePaddleAud.play();
-    } else if (!topCollision(ball, player) && !bottomCollisions(ball, player) && !leftCollision(ball, player) && !rightCollision(ball, player)) {
+    } else if (!detectCollision(sweptBall, player)) {
         ballCollidingWithPlayer = false;
     }
 }
+
 
 function resetGame(){
     gameOver=false;
