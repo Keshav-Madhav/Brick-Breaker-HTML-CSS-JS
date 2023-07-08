@@ -310,14 +310,14 @@ function update(timestamp) {
     ballBouncePaddle();
 
     //drawing blocks
-    context.fillStyle = "rgba(6, 0, 20,0.7)";
+    context.fillStyle="rgba(6, 0, 20,0.7)";
     context.strokeStyle = "skyblue";
-    context.lineWidth = 2;
+    context.lineWidth=2;
     context.shadowColor = "rgba(135,106,235, 0.7)";
     context.shadowBlur = 10;
-    for (let i = 0; blockArr.length > i; i++) {
-        let block = blockArr[i];
-        if (!block.break) {
+    for(let i=0; blockArr.length>i; i++){
+        let block=blockArr[i];
+        if(!block.break){
             if (topCollision(ball, block) || bottomCollisions(ball, block)) {
                 block.break = true;
                 ball.velY *= -1;
@@ -326,7 +326,7 @@ function update(timestamp) {
                 score += 100;
                 blockBreakAud.currentTime = 0;
                 blockBreakAud.play();
-            }
+            } 
             else if (leftCollision(ball, block) || rightCollision(ball, block)) {
                 block.break = true;
                 ball.velX *= -1;
@@ -435,20 +435,42 @@ function detectCollision(a, b) {
         a.y + a.height > b.y
 }
 
-function topCollision(ball, block) {
-    return detectCollision(ball, block) && (ball.y + ball.height) >= block.y;
-}
-
-function bottomCollisions(ball, block) {
-    return detectCollision(ball, block) && (block.y + block.height) >= ball.y;
-}
-
 function leftCollision(ball, block) {
-    return detectCollision(ball, block) && (ball.x + ball.width + ball.velX) >= block.x;
+    let currentBallLeft = ball.x;
+    let currentBallRight = ball.x + ball.width;
+    let currentBallTop = ball.y;
+    let currentBallBottom = ball.y + ball.height;
+
+    let nextBallLeft = currentBallLeft + ball.velX;
+    let nextBallRight = currentBallRight + ball.velX;
+
+    return  nextBallRight > block.x && 
+            nextBallLeft < block.x + block.width && 
+            currentBallBottom > block.y && 
+            currentBallTop < block.y + block.height;
 }
 
 function rightCollision(ball, block) {
-    return detectCollision(ball, block) && (block.x + block.width) >= (ball.x + ball.velX);
+    return leftCollision(ball, block);
+}
+
+function topCollision(ball, block) {
+    let currentBallLeft = ball.x;
+    let currentBallRight = ball.x + ball.width;
+    let currentBallTop = ball.y;
+    let currentBallBottom = ball.y + ball.height;
+
+    let nextBallTop = currentBallTop + ball.velY;
+    let nextBallBottom = currentBallBottom + ball.velY;
+
+    return  nextBallBottom > block.y && 
+            nextBallTop < block.y + block.height && 
+            currentBallRight > block.x && 
+            currentBallLeft < block.x + block.width;
+}
+
+function bottomCollisions(ball, block) {
+    return topCollision(ball, block);
 }
 
 function createBlocks() {
