@@ -127,7 +127,8 @@ document.getElementById('muteBgm').addEventListener('click', function() {
         backgroundAud.muted = false;
         bgmMuted = false;
         this.textContent = 'Mute Background Music';
-    } else {
+    } 
+    else {
         backgroundAud.muted = true;
         bgmMuted = true;
         this.textContent = 'Unmute Background Music';
@@ -140,7 +141,8 @@ document.getElementById('muteAll').addEventListener('click', function() {
         allSounds.forEach(sound => sound.muted = false);
         muted = false;
         this.textContent = 'Mute All Sounds';
-    } else {
+    } 
+    else {
         allSounds.forEach(sound => sound.muted = true);
         muted = true;
         this.textContent = 'Unmute All Sounds';
@@ -167,21 +169,43 @@ document.addEventListener('keydown', function(e) {
     if (e.code === 'ArrowLeft') {
         leftArrowDown = true;
         gameStarted = true;
-    } else if (e.code === 'ArrowRight') {
+        backgroundAud.play();
+    } 
+    else if (e.code === 'ArrowRight') {
         rightArrowDown = true;
         gameStarted = true;
         backgroundAud.play();
     }
 });
 
-
 document.addEventListener('keyup', function(e) {
     if (e.code === 'ArrowLeft') {
         leftArrowDown = false;
-    } else if (e.code === 'ArrowRight') {
+    } 
+    else if (e.code === 'ArrowRight') {
         rightArrowDown = false;
     }
 });
+
+document.addEventListener('touchstart', function(event) {
+    let touchX = event.touches[0].clientX;
+    let screenWidth = window.innerWidth;
+
+    if (touchX < screenWidth / 2) {
+        leftArrowDown = true;
+        gameStarted = true;
+        backgroundAud.play();
+    } else {
+        rightArrowDown = true;
+        gameStarted = true;
+        backgroundAud.play();
+    }
+}, false);
+
+document.addEventListener('touchend', function(event) {
+    leftArrowDown = false;
+    rightArrowDown = false;
+}, false);
 
 document.addEventListener('keydown', function(e) {
     if (e.key === 'p') {
@@ -252,12 +276,14 @@ function update(timestamp){
     if (Math.abs(ball.velX) > maxBallVelX) {
         console.log("vel before was greater")
         ball.velX = maxBallVelX * Math.sign(ball.velX);
-    } else if (Math.abs(ball.velX) < minBallVelX) {
+    } 
+    else if (Math.abs(ball.velX) < minBallVelX) {
         ball.velX = minBallVelX * Math.sign(ball.velX);
     }
     if (Math.abs(ball.velY) > maxBallVelY) {
         ball.velY = maxBallVelY * Math.sign(ball.velY);
-    } else if (Math.abs(ball.velY) < minBallVelY) {
+    } 
+    else if (Math.abs(ball.velY) < minBallVelY) {
         ball.velY = minBallVelY * Math.sign(ball.velY);
     }
 
@@ -301,22 +327,8 @@ function update(timestamp){
 
     //next level
     if(blockCount==0){
-        score+=100*blockRows*blockColumns;
-        blockRows = Math.min(blockRows+1,blockMaxRows);
-        level++;
-        playerWidth += 10; // increase paddle size
-        if (player.x + playerWidth > boardWidth) {
-            player.x = boardWidth - playerWidth;
-        }
-        powerUpAud.play();
-        setTimeout(() => levelCompleteAud.play(), 300);
-        if (level % 3 === 0 && lives < maxLives) {
-            lives++; // gain an extra life
-            setTimeout(() => lifeGainAud.play(), 600);
-        }
-        createBlocks();
+        levelUp();
     }    
-
 
     //score
     context.fillStyle="lightgreen";
@@ -355,6 +367,23 @@ function update(timestamp){
         }
     }
 
+}
+
+function levelUp(){
+    score+=100*blockRows*blockColumns;
+    blockRows = Math.min(blockRows+1,blockMaxRows);
+    level++;
+    playerWidth += 10; // increase paddle size
+    if (player.x + playerWidth > boardWidth) {
+        player.x = boardWidth - playerWidth;
+    }
+    powerUpAud.play();
+    setTimeout(() => levelCompleteAud.play(), 300);
+    if (level % 3 === 0 && lives < maxLives) {
+        lives++; // gain an extra life
+        setTimeout(() => lifeGainAud.play(), 600);
+    }
+    createBlocks();
 }
 
 function getRandomDeviation() {
