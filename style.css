@@ -96,12 +96,26 @@ button:hover {
 
 .social-icon{
     color: #ffffff;
-    font-size: large;
+    display: inline;
+    width: 30px;
 }
 
-.social-text{
+.social-text , p{
+    display: inline;
     color: #ffffff;
     font-size: small;
     font-family: "consolas";
     cursor: pointer;
+    width: fit-content;
+}
+
+.social{
+    width: fit-content;
+}
+
+footer{
+    display: flex;
+    justify-content: space-between;
+    width: 70vmin;
+    margin: 20px auto;
 }
