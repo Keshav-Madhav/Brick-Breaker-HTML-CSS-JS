@@ -93,3 +93,15 @@ button {
 button:hover {
     background-color: deepskyblue;
 }
+
+.social-icon{
+    color: #ffffff;
+    font-size: large;
+}
+
+.social-text{
+    color: #ffffff;
+    font-size: small;
+    font-family: "consolas";
+    cursor: pointer;
+}
