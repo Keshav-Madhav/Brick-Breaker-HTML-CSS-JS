@@ -135,12 +135,11 @@ document.getElementById('muteBgm').addEventListener('click', function () {
     }
 });
 
-
 document.getElementById('muteAll').addEventListener('click', function () {
     if (muted) {
         allSounds.forEach(sound => sound.muted = false);
         muted = false;
-        this.textContent = 'Mute All Sounds';
+        this.textContent = 'Mute All SFX';
     }
     else {
         allSounds.forEach(sound => sound.muted = true);
@@ -148,16 +147,6 @@ document.getElementById('muteAll').addEventListener('click', function () {
         this.textContent = 'Unmute All SFX';
     }
 });
-
-document.getElementById('isPaused').addEventListener('click', function () {
-    paused = !paused;
-    if (paused) {
-        this.textContent = 'Resume Game';
-    } else {
-        this.textContent = 'Pause Game';
-    }
-});
-
 
 document.addEventListener('keydown', function (e) {
     if (e.key === 'm') {
@@ -172,8 +161,6 @@ document.addEventListener('keydown', function (e) {
         }
     }
 });
-
-
 
 document.addEventListener('keydown', function (e) {
     if (e.code === 'ArrowLeft') {
@@ -217,12 +204,26 @@ document.addEventListener('touchend', function (event) {
     rightArrowDown = false;
 }, false);
 
+//pause
 document.addEventListener('keydown', function (e) {
     if (e.key === 'p') {
         paused = !paused;
     }
+    if (paused) {
+        document.getElementById("isPaused").textContent = 'Resume Game';
+    } else {
+        document.getElementById("isPaused").textContent = 'Pause Game';
+    }
 });
 
+document.getElementById('isPaused').addEventListener('click', function () {
+    paused = !paused;
+    if (paused) {
+        this.textContent = 'Resume Game';
+    } else {
+        this.textContent = 'Pause Game';
+    }
+});
 
 window.onload = function () {
     //board
@@ -249,13 +250,11 @@ function update(timestamp) {
         requestAnimationFrame(update);
         return;
     }
-
     requestAnimationFrame(update);
 
     if (gameOver || countdownActive || paused) {
         return;
     }
-
     context.clearRect(0, 0, boardWidth, boardHeight)
 
     // Calculate and display FPS
@@ -286,7 +285,6 @@ function update(timestamp) {
         ball.y += ball.velY;
     }
     context.fillRect(ball.x, ball.y, ball.width, ball.height);
-
 
     // limit ball velocity to range between min and max values
     if (Math.abs(ball.velX) > maxBallVelX) {
@@ -369,7 +367,6 @@ function update(timestamp) {
         }
     }
 
-
     //player move
     if (leftArrowDown) {
         let nextPlayerx = player.x - player.velX;
@@ -382,7 +379,6 @@ function update(timestamp) {
             player.x = nextPlayerx;
         }
     }
-
 }
 
 function levelUp() {
@@ -649,6 +645,4 @@ function drawGameObjects() {
             context.drawImage(heartOutlineImage, x, y, width, height);
         }
     }
-
-
 }

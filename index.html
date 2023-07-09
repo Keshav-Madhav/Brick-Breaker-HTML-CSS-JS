@@ -15,25 +15,28 @@
   </head>
   <body>
     <div class="background"></div>
-    <div class="container text-center my-5">
-      <canvas id="board"></canvas>
-      <div class="volControl">
-        <label for="bgmVolume" class="bgvol">Background Music Volume:</label>
-        <input
-          type="range"
-          id="bgmVolume"
-          name="bgmVolume"
-          min="0"
-          max="1"
-          step="0.01"
-          value="0.1"
-        />
-      </div>
-      <button class="btn mx-1" id="muteBgm">Mute Background Music</button>
-      <button class="btn mx-1" id="muteAll">Mute All SFX</button>
-      <button class="btn mx-1" id="isPaused">Pause Game</button>
+
+    <canvas id="board"></canvas>
+
+    <div class="volControl">
+      <label for="bgmVolume" class="bgvol">Background Music Volume:</label>
+      <input
+        type="range"
+        id="bgmVolume"
+        name="bgmVolume"
+        min="0"
+        max="1"
+        step="0.01"
+        value="0.1"
+      />
     </div>
-    
+
+    <div class="buttons">
+      <button id="muteBgm">Mute Background Music</button>
+      <button id="muteAll">Mute All SFX</button>
+      <button id="isPaused">Pause Game</button>
+    </div>
+
     <footer>
       <div class="social">
           <i class="social-icon fa-brands fa-github"></i>
