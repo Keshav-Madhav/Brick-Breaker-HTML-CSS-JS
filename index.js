@@ -186,6 +186,10 @@ document.addEventListener('keyup', function (e) {
 });
 
 document.addEventListener('touchstart', function (event) {
+    if (gameOver) {
+        resetGame();
+        return;
+    }
     let touchX = event.touches[0].clientX;
     let screenWidth = window.innerWidth;
 
@@ -505,7 +509,7 @@ function ballBounceWall() {
         lifeLostAud.play();
         if (lives === 0) {
             context.font = "20px sans-serif";
-            context.fillText("Gameover: Press 'space' to restart", 220, 400);
+            context.fillText("Gameover: Press 'space' or -tap screen- to restart", 220, 400);
             gameOver = true;
             backgroundAud.pause();
             gameOverAud.play();
