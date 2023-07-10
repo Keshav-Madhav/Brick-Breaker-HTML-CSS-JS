@@ -1,6 +1,7 @@
-let fps = 60;
+let fps=60;
 let fpsInterval = 1000 / fps;
-let lastFrameTime = 0;
+let lastFrameTime = Date.now();
+let lastframe=0
 let frameCount = 0;
 let currentFps = 0;
 
@@ -245,6 +246,9 @@ window.onload = function () {
 }
 
 function update(timestamp) {
+    let now = Date.now();
+    let deltaTime = (now - lastFrameTime) / 8;
+    lastFrameTime = now;
 
     if (paused) {
         requestAnimationFrame(update);
@@ -259,11 +263,11 @@ function update(timestamp) {
 
     // Calculate and display FPS
     frameCount++;
-    let elapsedTime = timestamp - lastFrameTime;
+    let elapsedTime = timestamp - lastframe;
     if (elapsedTime > fpsInterval) {
         currentFps = Math.round(frameCount / (elapsedTime / 1000));
         frameCount = 0;
-        lastFrameTime = timestamp;
+        lastframe = timestamp;
     }
     context.shadowColor = "transparent";
     context.fillStyle = 'rgba(255,255,255,0.5)';
@@ -281,8 +285,8 @@ function update(timestamp) {
     context.shadowColor = "rgba(255,355,255, 0.7)";
     context.shadowBlur = 40;
     if (gameStarted) {
-        ball.x += ball.velX;
-        ball.y += ball.velY;
+        ball.x += ball.velX * deltaTime;
+        ball.y += ball.velY * deltaTime;
     }
     context.fillRect(ball.x, ball.y, ball.width, ball.height);
 
@@ -369,12 +373,12 @@ function update(timestamp) {
 
     //player move
     if (leftArrowDown) {
-        let nextPlayerx = player.x - player.velX;
+        let nextPlayerx = player.x - player.velX *deltaTime;
         if (!outOfBounds(nextPlayerx)) {
             player.x = nextPlayerx;
         }
     } else if (rightArrowDown) {
-        let nextPlayerx = player.x + player.velX;
+        let nextPlayerx = player.x + player.velX * deltaTime;
         if (!outOfBounds(nextPlayerx)) {
             player.x = nextPlayerx;
         }
