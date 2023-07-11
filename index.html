@@ -15,27 +15,43 @@
   </head>
   <body>
     <div class="background"></div>
+    <div class="container">
+      <div class="settings">
+        <p class="instructions">
+          <span>Instructions: </span><br>
+          <br>
+            Press left/right arrow to control the paddle. <br>
+            <strong>(M)</strong>- Mute Music <br>
+            <strong>(P)</strong>- Pause Game <br>
+            <strong>(Space)</strong>- Restart[if game over]  <br>
+          <br>
+            <strong>Mobile:</strong><br>
+            Tap left/right half of screen control the paddle. <br>
+            Tap screen on game over to restart.
+        </p>
 
-    <canvas id="board"></canvas>
-
-    <div class="volControl">
-      <label for="bgmVolume" class="bgvol">Background Music Volume:</label>
-      <input
-        type="range"
-        id="bgmVolume"
-        name="bgmVolume"
-        min="0"
-        max="1"
-        step="0.01"
-        value="0.1"
-      />
+        <div class="volControl">
+          <label for="bgmVolume" class="bgvol">Music Volume:</label>
+          <input
+            type="range"
+            id="bgmVolume"
+            name="bgmVolume"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.1"
+          />
+        </div>
+    
+        <div class="buttons">
+          <button id="muteBgm">Mute Background Music</button>
+          <button id="muteAll">Mute All SFX</button>
+          <button id="isPaused">Pause Game</button>
+        </div>
+      </div>
+      <canvas id="board"></canvas>
     </div>
 
-    <div class="buttons">
-      <button id="muteBgm">Mute Background Music</button>
-      <button id="muteAll">Mute All SFX</button>
-      <button id="isPaused">Pause Game</button>
-    </div>
 
     <footer>
       <div class="social">

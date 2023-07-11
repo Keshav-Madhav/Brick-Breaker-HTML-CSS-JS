@@ -16,6 +16,42 @@ body {
     box-shadow: inset 0 0 20px 20px black;
 }
 
+.container{
+    display: flex;
+    flex-wrap: wrap-reverse;
+    margin: 20px auto;
+    width: fit-content;
+    gap: 5vmin;
+    align-items: center;
+    justify-content: center;
+}
+
+.settings{
+    display: flex;
+    flex-direction: column;
+    height: 550px;
+}
+
+.instructions{
+    text-align: left;
+    font-size: 14px;
+    word-wrap: break-word;
+    width: 260px;
+    display: inline;
+    color: #ffffff;
+    font-size: 13px;
+    font-family: "consolas";
+}
+
+.instructions span{
+    font-size: 15px;
+}
+
+.buttons{
+    display: flex;
+    flex-direction: column;
+}
+
 #board{
     /* background: url("./Assets/Background.jpg"); */
     background-color: black;
@@ -35,7 +71,10 @@ label, #bgmVolume, button {
 
 .volControl{
     margin-top: 15px;
-    color: #d3d3d3;
+    color: #eaeaea;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
 }
 
 .bgvol{
@@ -100,7 +139,7 @@ button:hover {
     width: 30px;
 }
 
-.social-text , p{
+.social-text{
     display: inline;
     color: #ffffff;
     font-size: small;
@@ -116,6 +155,6 @@ button:hover {
 footer{
     display: flex;
     justify-content: space-between;
-    width: 70vmin;
-    margin: 20px auto;
+    width: 80%;
+    margin: 40px auto;
 }
