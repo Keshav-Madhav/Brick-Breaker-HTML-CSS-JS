@@ -1,6 +1,7 @@
 body {
     text-align: center;
     font-family: sans-serif;
+    height: 96vh;
 }
 
 .background {
@@ -51,24 +52,23 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
-  
-  .buttons button {
+}
+.buttons button {
     position: relative;
     background-color: #6c56b7;
     color: #ffffff;
     border: none;
-    padding: 16px 28px;
-    border-radius: 50px;
-    font-size: 20px;
-    font-weight: bold;
+    padding: 12px 22px;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: medium;
     cursor: pointer;
     overflow: hidden;
     transition: transform 0.3s ease-in-out;
     box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.3);
-  }
-  
-  .buttons button::before {
+}
+
+.buttons button::before {
     content: "";
     position: absolute;
     top: -10px;
@@ -81,18 +81,18 @@ body {
     z-index: -1;
     filter: blur(10px);
     transition: opacity 0.3s ease-in-out;
-  }
-  
-  .buttons button:hover {
+}
+
+.buttons button:hover {
     transform: translateY(-3px);
     box-shadow: 0px 12px 20px rgba(0, 0, 0, 0.4);
-  }
-  
-  .buttons button:hover::before {
+}
+
+.buttons button:hover::before {
     opacity: 0.8;
-  }
-  
-  .buttons button::after {
+}
+
+.buttons button::after {
     content: "";
     position: absolute;
     top: 100%;
@@ -103,16 +103,16 @@ body {
     opacity: 0.6;
     z-index: -1;
     transition: top 0.3s ease-in-out;
-  }
-  
-  .buttons button:hover::after {
+}
+
+.buttons button:hover::after {
     top: -100%;
-  }
-  
-  .buttons button:last-child {
+}
+
+.buttons button:last-child {
     margin-bottom: 0;
-  }
-  
+}
+
 
 #board{
     /* background: url("./Assets/Background.jpg"); */
@@ -137,19 +137,21 @@ label, #bgmVolume, button {
     display: flex;
     flex-direction: column;
     text-align: left;
+    align-items: center;
 }
 
 .bgvol{
     box-shadow: none;
     font-weight: bold;
     font-size: 15px;
+    align-self: flex-start;
 }
 
 #bgmVolume {
     width: 200px;
     -webkit-appearance: none;
     appearance: none;
-    width: 200px;
+    width: 80%;
     height: 10px;
     border-radius: 5px;
     background: #d3d3d3;
@@ -195,23 +197,32 @@ button:hover {
     background-color: deepskyblue;
 }
 
-.social-icon{
+.social img{
     color: #ffffff;
     display: inline;
     width: 30px;
+    height: 30px;
 }
 
-.social-text{
+.social-text, .social p{
     display: inline;
     color: #ffffff;
     font-size: small;
     font-family: "consolas";
     cursor: pointer;
     width: fit-content;
+    top: -10px;
+}
+
+.social-text span{
+    font-size: medium;
 }
 
 .social{
     width: fit-content;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 footer{

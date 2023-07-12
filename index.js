@@ -127,12 +127,12 @@ document.getElementById('muteBgm').addEventListener('click', function () {
     if (backgroundAud.muted) {
         backgroundAud.muted = false;
         bgmMuted = false;
-        this.textContent = 'Mute Background Music';
+        this.textContent = 'Mute Music';
     }
     else {
         backgroundAud.muted = true;
         bgmMuted = true;
-        this.textContent = 'Unmute Background Music';
+        this.textContent = 'Unmute Music';
     }
 });
 
