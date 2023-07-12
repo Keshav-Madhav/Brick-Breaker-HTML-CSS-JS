@@ -59,6 +59,7 @@ let lives = 3;
 let maxLives = 4;
 let gameStarted = false;
 let paused = false;
+var highScore=localStorage.getItem("highscore") ||0;
 
 
 let countdown = 3;
@@ -276,7 +277,7 @@ function update(timestamp) {
     context.shadowColor = "transparent";
     context.fillStyle = 'rgba(255,255,255,0.5)';
     context.font = "10px sans-serif";
-    context.fillText("FPS: " + currentFps, 10, 10);
+    context.fillText("FPS: " + currentFps, boardWidth-50, 10);
 
     //player paddle
     context.fillStyle = "red";
@@ -330,6 +331,10 @@ function update(timestamp) {
                 ball.velY += getRandomDeviation();
                 blockCount -= 1;
                 score += 100;
+                if (score > highScore) {
+                    highScore = score;
+                    localStorage.setItem("highscore", highScore);
+                }                
                 blockBreakAud.currentTime = 0;
                 blockBreakAud.play();
             } 
@@ -339,6 +344,11 @@ function update(timestamp) {
                 ball.velX += getRandomDeviation();
                 blockCount -= 1;
                 score += 100;
+                if (score > highScore) {
+                    highScore = score;
+                    localStorage.setItem("highscore", highScore);
+                }
+                
                 blockBreakAud.currentTime = 0;
                 blockBreakAud.play();
             }
@@ -355,9 +365,13 @@ function update(timestamp) {
     //score
     context.fillStyle = "lightgreen";
     context.font = "20px sans-serif";
-    context.fillText("Score: " + score, 10, 30)
+    context.fillText("Score: " + score, 10, 20)
+    context.font = "12px sans-serif";
+    context.fillText("High Score: " + highScore, 11, 36);
+
 
     // level
+    context.font = "20px sans-serif";
     context.fillText("Level: " + level, boardWidth - 80, 30);
 
     //lives
@@ -391,6 +405,11 @@ function update(timestamp) {
 
 function levelUp() {
     score += 100 * blockRows * blockColumns;
+    if (score > highScore) {
+        highScore = score;
+        localStorage.setItem("highscore", highScore);
+    }
+    
     blockRows = Math.min(blockRows + 1, blockMaxRows);
     level++;
     playerWidth += 10; // increase paddle size
@@ -634,9 +653,13 @@ function drawGameObjects() {
     // draw score
     context.fillStyle = "lightgreen";
     context.font = "20px sans-serif";
-    context.fillText("Score: " + score, 10, 25);
+    context.fillText("Score: " + score, 10, 20)
+    context.font = "12px sans-serif";
+    context.fillText("High Score: " + highScore, 11, 36);
+
 
     // level
+    context.font = "20px sans-serif";
     context.fillText("Level: " + level, boardWidth - 80, 25);
 
     //lives
